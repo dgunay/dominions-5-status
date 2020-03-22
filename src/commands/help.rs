@@ -1,10 +1,13 @@
 use log::*;
 use serenity::framework::standard::CommandError;
 use serenity::model::channel::Message;
+use serenity::prelude::Context;
+use serenity::framework::standard::macros::help;
 
-pub fn help(message: &Message) -> Result<(), CommandError> {
+#[help]
+pub fn help(ctx: &mut Context, msg: &Message) -> Result<(), CommandError> {
     debug!("HELP COMMAND");
-    let _ = message.reply(
+    let _ = msg.reply((&ctx.cache, ctx.http.as_ref()),
         "Commands (server alias is optional, defaults to channel name): \n\
          - !add <address:port> <alias>: save the dom5 server address\n\
          - !list: return a list of the saved server addresses and aliases\n\

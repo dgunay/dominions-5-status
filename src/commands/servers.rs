@@ -1,8 +1,6 @@
-// FIXME
 pub mod add_server;
 pub mod describe;
 pub mod details;
-// pub mod details;
 pub mod list_servers;
 pub mod lobbies;
 pub mod lobby;

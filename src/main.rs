@@ -96,16 +96,13 @@ fn create_discord_client() -> Result<Client, Error> {
         data.insert::<DetailsReadHandleKey>(CacheReadHandle(reader.factory()));
     }
 
-    // use crate::commands::servers::WithServersCommands;
-    // use crate::commands::WithSearchCommands;
     discord_client.with_framework(
         StandardFramework::new()
             .configure(|c| c.prefix("!"))
             .bucket("simple", |b| b.delay(1))
             .group(&crate::commands::search::SEARCH_GROUP)
             .group(&crate::commands::servers::SERVER_GROUP)
-            // FIXME
-            // .help(|_, msg, _, _, _| commands::help(msg))
+            .help(&crate::commands::help::HELP)
             .before(|_, msg, _| {
                 info!("received message {:?}", msg);
                 !msg.author.bot // ignore bots
@@ -124,7 +121,6 @@ fn create_discord_client() -> Result<Client, Error> {
     let writer_mutex = Arc::new(Mutex::new(CacheWriteHandle(write)));
     let writer_mutex_clone = writer_mutex.clone();
 
-    // FIXME
     let cache_and_http = discord_client.cache_and_http.clone();
     thread::spawn(move || {
         crate::commands::servers::turn_check::update_details_cache_loop(
