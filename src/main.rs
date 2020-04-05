@@ -17,10 +17,15 @@ use std::io::Read;
 use std::sync::Arc;
 use std::thread;
 
+use tokio::prelude::*;
+
 use crate::db::*;
 
 use model::game_state::CacheEntry;
 use evmap;
+
+mod turn_check_sender;
+mod turn_check_receiver;
 
 use chrono::{DateTime, Utc};
 
@@ -45,20 +50,16 @@ impl CacheReadHandle {
 struct Handler;
 impl EventHandler for Handler {}
 
-fn main() {
-    if let Err(e) = do_main() {
-        info!("server crashed with error {:?}", e)
-    }
-}
-
-fn do_main() -> Result<(), Error> {
-    SimpleLogger::init(LogLevelFilter::Info, Config::default())?;
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    SimpleLogger::init(LogLevelFilter::Info, Config::default()).unwrap();
     info!("Logger initialised");
 
-    let mut discord_client = create_discord_client().context("Creating discord client")?;
-    if let Err(why) = discord_client.start() {
-        error!("Client error: {:?}", why);
-    }
+    let mut discord_client = create_discord_client().await.unwrap();
+    let _ = tokio::task::spawn_blocking(move || {
+        let _ = discord_client.start();
+    }).await?;
+
     Ok(())
 }
 
@@ -77,18 +78,18 @@ impl typemap::Key for DetailsReadHandleKey {
     type Value = CacheReadHandle;
 }
 
-fn create_discord_client() -> Result<Client, Error> {
-    let token = read_token().context("Reading token file")?;
+async fn create_discord_client() -> Result<Client, Error> {
+    let token = read_token().unwrap();
 
-    let path = env::current_dir()?;
+    let path = env::current_dir().unwrap();
     let path = path.join("resources/dom5bot.db");
     let db_conn =
-        DbConnection::new(&path).context(format!("Opening database '{}'", path.display()))?;
+        DbConnection::new(&path).context(format!("Opening database '{}'", path.display())).unwrap();
     info!("Opened database connection");
 
     let (reader, write) = evmap::new();
 
-    let mut discord_client = Client::new(&token, Handler).map_err(SyncFailure::new)?;
+    let mut discord_client = Client::new(&token, Handler).unwrap();
     info!("Created discord client");
     {
         let mut data = discord_client.data.write();
@@ -136,5 +137,3 @@ fn create_discord_client() -> Result<Client, Error> {
     // start listening for events by starting a single shard
     Ok(discord_client)
 }
-
-

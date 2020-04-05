@@ -1,5 +1,6 @@
 use super::*;
 use crate::model::enums::Era;
+use crate::model::game_server::*;
 use serenity::model::id::UserId;
 
 #[test]

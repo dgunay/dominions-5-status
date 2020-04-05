@@ -14,10 +14,21 @@ use std::time::Duration;
 use crate::model::game_data::GameData;
 use crate::model::raw_game_data::RawGameData;
 use crate::model::nation::Nation;
+use std::future::Future;
+use std::pin::Pin;
 
-pub trait ServerConnection {
+pub trait ServerConnection: 'static {
     fn get_game_data(server_address: &str) -> io::Result<GameData>;
+    fn get_game_data_async(server_address: &str) -> Pin<Box<dyn Future<Output=anyhow::Result<GameData>> + Send + Sync>> {
+        unimplemented!()
+    }
     fn get_snek_data(server_address: &str) -> Result<Option<SnekGameStatus>, Box<dyn Error>>;
+    fn get_snek_data_async(server_address: &str)
+        -> Pin<Box<dyn Future<Output=
+        anyhow::Result<Option<SnekGameStatus>>
+    > + Send + Sync>> {
+        unimplemented!()
+    }
 }
 
 fn get_game_data_cache(server_address: &str) -> io::Result<GameData> {

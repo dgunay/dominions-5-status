@@ -7,7 +7,7 @@ macro_rules! mock_server_connection {
     ($struct_name:ident, $ret_val:expr) => {
         struct $struct_name;
         impl ServerConnection for $struct_name {
-            fn get_game_data(_: &str) -> io::Result<crate::model::GameData> {
+            fn get_game_data(_: &str) -> io::Result<crate::model::game_data::GameData> {
                 $ret_val
             }
             fn get_snek_data(
