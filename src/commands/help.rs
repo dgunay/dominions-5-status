@@ -18,6 +18,7 @@ use serenity::{
 // };
 
 pub fn help(message: &Message) -> Result<(), CommandError> {
+    todo!("Convert this to the new paradigm");
     debug!("HELP COMMAND");
     let _ = message.reply(
         CacheAndHttp::default(), // TODO: more research on if this is ok

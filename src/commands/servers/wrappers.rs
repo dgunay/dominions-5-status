@@ -121,3 +121,33 @@ pub fn unstart(cx: &mut Context, m: &Message, a: Args) -> CommandResult {
 //////////////////////////
 // SEARCH COMMANDS
 //////////////////////////
+
+#[command]
+pub fn item(cx: &mut Context, m: &Message, a: &Args) -> CommandResult {
+
+}
+
+#[command]
+pub fn spell(cx: &mut Context, m: &Message, a: &Args) -> CommandResult {
+
+}
+
+#[command]
+pub fn unit(cx: &mut Context, m: &Message, a: &Args) -> CommandResult {
+
+}
+
+#[command]
+pub fn site(cx: &mut Context, m: &Message, a: &Args) -> CommandResult {
+
+}
+
+#[command]
+pub fn merc(cx: &mut Context, m: &Message, a: &Args) -> CommandResult {
+
+}
+
+#[command]
+pub fn event(cx: &mut Context, m: &Message, a: &Args) -> CommandResult {
+
+}
